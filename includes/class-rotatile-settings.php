@@ -69,6 +69,19 @@ final class Rotatile_Settings {
 	const CSS_TIME_PATTERN = '/^[0-9]*\.?[0-9]+m?s$/';
 
 	/**
+	 * Resolved values, kept for the rest of the request.
+	 *
+	 * The render_block filter runs for every block on the page, and each call
+	 * asks for the supported blocks and, for a rotated one, the angle range
+	 * several times over. The filters are resolved once instead. Nothing reads
+	 * these before `init`, so every callback a theme or plugin adds is in
+	 * place by the time the first value is stored.
+	 *
+	 * @var array<string,mixed>
+	 */
+	private static $resolved = array();
+
+	/**
 	 * Returns the block types the Rotation panel is offered on.
 	 *
 	 * The default is deliberately a single block type. Rotating running text
@@ -78,6 +91,10 @@ final class Rotatile_Settings {
 	 * @return string[] List of block names, possibly empty.
 	 */
 	public static function get_supported_blocks() {
+		if ( isset( self::$resolved['supported_blocks'] ) ) {
+			return self::$resolved['supported_blocks'];
+		}
+
 		/**
 		 * Filters the block types that can be rotated.
 		 *
@@ -88,7 +105,9 @@ final class Rotatile_Settings {
 		$blocks = apply_filters( 'rotatile_supported_blocks', self::DEFAULT_SUPPORTED_BLOCKS );
 
 		if ( ! is_array( $blocks ) ) {
-			return self::DEFAULT_SUPPORTED_BLOCKS;
+			self::$resolved['supported_blocks'] = self::DEFAULT_SUPPORTED_BLOCKS;
+
+			return self::$resolved['supported_blocks'];
 		}
 
 		$sanitized = array();
@@ -107,7 +126,9 @@ final class Rotatile_Settings {
 			$sanitized[] = $block_name;
 		}
 
-		return array_values( array_unique( $sanitized ) );
+		self::$resolved['supported_blocks'] = array_values( array_unique( $sanitized ) );
+
+		return self::$resolved['supported_blocks'];
 	}
 
 	/**
@@ -119,6 +140,10 @@ final class Rotatile_Settings {
 	 * @return array{min:int,max:int} Angle bounds in degrees.
 	 */
 	public static function get_angle_range() {
+		if ( isset( self::$resolved['angle_range'] ) ) {
+			return self::$resolved['angle_range'];
+		}
+
 		/**
 		 * Filters the lowest angle the control offers.
 		 *
@@ -141,16 +166,16 @@ final class Rotatile_Settings {
 		$max = self::to_degrees( $max, self::DEFAULT_MAX_ANGLE );
 
 		if ( $min >= $max ) {
-			return array(
-				'min' => self::DEFAULT_MIN_ANGLE,
-				'max' => self::DEFAULT_MAX_ANGLE,
-			);
+			$min = self::DEFAULT_MIN_ANGLE;
+			$max = self::DEFAULT_MAX_ANGLE;
 		}
 
-		return array(
+		self::$resolved['angle_range'] = array(
 			'min' => $min,
 			'max' => $max,
 		);
+
+		return self::$resolved['angle_range'];
 	}
 
 	/**
@@ -180,6 +205,13 @@ final class Rotatile_Settings {
 
 	/**
 	 * Returns the angle applied to a block that carries no usable value.
+	 *
+	 * This is also the attribute default the editor registers, and the block
+	 * editor leaves an attribute equal to its default out of the block
+	 * comment. A block without `rotation` is therefore a block at this angle,
+	 * including blocks saved before the filter was added. Skipping those
+	 * blocks in the renderer would show a block set to the default angle
+	 * rotated in the editor and straight on the front end.
 	 *
 	 * @return int Angle in degrees, inside the configured range.
 	 */
@@ -255,7 +287,7 @@ final class Rotatile_Settings {
 			return self::get_default_angle();
 		}
 
-		return self::clamp( (int) round( $angle ) );
+		return self::clamp( self::round_to_int( $angle ) );
 	}
 
 	/**
@@ -293,7 +325,22 @@ final class Rotatile_Settings {
 			return $fallback;
 		}
 
-		return (int) round( $number );
+		return self::round_to_int( $number );
+	}
+
+	/**
+	 * Rounds a finite float to an integer without overflowing.
+	 *
+	 * Casting a float outside the integer range is undefined in PHP, so a
+	 * forged `1e30` could come out as anything, including 0, before clamp()
+	 * ever sees it. Bounding it first keeps the result on the right side of
+	 * the range; a million degrees is far past any angle the range allows.
+	 *
+	 * @param float $number Finite number.
+	 * @return int Rounded value.
+	 */
+	private static function round_to_int( $number ) {
+		return (int) round( max( -1000000.0, min( 1000000.0, $number ) ) );
 	}
 
 	/**

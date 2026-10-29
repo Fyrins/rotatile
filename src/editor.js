@@ -29,14 +29,26 @@ const FALLBACK = {
 /**
  * Rounds a value to a whole number, or returns the fallback.
  *
+ * Reads the value the way the PHP side does, so the preview never shows an
+ * angle the server would not render: only numbers and numeric strings count
+ * (`'12abc'` is rejected, as is_numeric() rejects it), and halves round away
+ * from zero, as PHP's round() does.
+ *
  * @param {*}      value    Value to convert.
  * @param {number} fallback Returned when the value is not a finite number.
  * @return {number} Whole number.
  */
 function toInteger( value, fallback ) {
-	const number = parseFloat( value );
+	const isNumeric =
+		'number' === typeof value ||
+		( 'string' === typeof value && '' !== value.trim() );
+	const number = isNumeric ? Number( value ) : NaN;
 
-	return Number.isFinite( number ) ? Math.round( number ) : fallback;
+	if ( ! Number.isFinite( number ) ) {
+		return fallback;
+	}
+
+	return Math.sign( number ) * Math.round( Math.abs( number ) );
 }
 
 const provided = window.rotatileSettings || {};

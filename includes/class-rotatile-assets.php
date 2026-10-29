@@ -162,10 +162,17 @@ final class Rotatile_Assets {
 		 * the editor and the renderer cannot disagree about them. Printed
 		 * before the script rather than through wp_localize_script(), which
 		 * exists for localization and carries l10n baggage this does not need.
+		 *
+		 * The block names come from a filter and end up inside a <script>
+		 * element, so < > and & are hex-escaped. If encoding fails anyway,
+		 * an empty object lets the script fall back to its defaults instead
+		 * of printing a syntax error.
 		 */
+		$settings = wp_json_encode( Rotatile_Settings::get_settings_for_script(), JSON_HEX_TAG | JSON_HEX_AMP );
+
 		wp_add_inline_script(
 			self::EDITOR_SCRIPT_HANDLE,
-			'window.rotatileSettings = ' . wp_json_encode( Rotatile_Settings::get_settings_for_script() ) . ';',
+			'window.rotatileSettings = ' . ( false === $settings ? '{}' : $settings ) . ';',
 			'before'
 		);
 

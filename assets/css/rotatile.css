@@ -10,7 +10,12 @@
  * on a page that actually contains a rotated block.
  */
 
-.rotatile-rotated {
+/*
+ * The class is doubled to raise specificity to 0,2,0, so a theme rule such as
+ * `.wp-block-image { transition: ... }` does not silently reset the origin or
+ * the transition of a rotated block.
+ */
+.rotatile-rotated.rotatile-rotated {
 	transform-origin: 50% 50%;
 	transition: transform var( --rotatile-duration, 0.2s ) ease;
 }
@@ -23,7 +28,7 @@
  */
 @media ( prefers-reduced-motion: reduce ) {
 
-	.rotatile-rotated {
+	.rotatile-rotated.rotatile-rotated {
 		transition: none;
 	}
 }
