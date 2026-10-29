@@ -14,13 +14,13 @@ Read the **Design decisions** section of [README.md](README.md). Five of them ar
 
 Also declined by default: a settings page, an option in the database, an admin notice, a credit in the front-end output, an outgoing request of any kind, and a bundled third-party library where WordPress already ships one.
 
-Widening `rotate_everything_supported_blocks`' default is a separate conversation. The single-block default is a readability decision, not an accident.
+Widening `rotatile_supported_blocks`' default is a separate conversation. The single-block default is a readability decision, not an accident.
 
 ## Setting up
 
 ```bash
-git clone git@github.com:Fyrins/rotate-everything.git
-cd rotate-everything
+git clone git@github.com:Fyrins/rotatile.git
+cd rotatile
 composer install          # PHPCS
 npm install               # @wordpress/scripts
 npm run build             # produces build/editor.js
@@ -30,7 +30,7 @@ npm run build             # produces build/editor.js
 
 Use `npm start` while working on `src/editor.js`; it rebuilds on save.
 
-Symlink or copy the directory into a WordPress install at `wp-content/plugins/rotate-everything`. Keep that exact directory name.
+Symlink or copy the directory into a WordPress install at `wp-content/plugins/rotatile`. Keep that exact directory name.
 
 A disposable testbed is enough, and a separate directory from this repository is the point:
 
@@ -40,7 +40,7 @@ ddev config --project-type=wordpress --project-name=rotate-everything-testbed
 ddev start
 ddev wp core download
 ddev wp core install --url=https://rotate-everything-testbed.ddev.site \
-  --title="Rotate Everything testbed" --admin_user=admin \
+  --title="Rotatile testbed" --admin_user=admin \
   --admin_password=admin --admin_email=admin@example.test
 ddev wp theme install twentytwentyfive --activate
 ddev wp plugin install plugin-check --activate
@@ -49,9 +49,9 @@ ddev wp plugin install plugin-check --activate
 Sync the plugin in by applying `.distignore`, so you are looking at what ships:
 
 ```bash
-( cd /path/to/rotate-everything && npm run build )
+( cd /path/to/rotatile && npm run build )
 rsync -a --delete --delete-excluded --exclude-from=.distignore \
-  /path/to/rotate-everything/ web/wp-content/plugins/rotate-everything/
+  /path/to/rotatile/ web/wp-content/plugins/rotatile/
 ```
 
 `--delete-excluded` is not optional. Without it rsync protects excluded files from deletion, and the target directory stays polluted by whatever the previous sync left there.
@@ -76,17 +76,17 @@ Watch the bundle size in the build output. It sits under 3 KB. A jump means a pa
 composer lint
 ```
 
-Nothing reported. Not "a few warnings we live with": nothing. The ruleset is `phpcs.xml.dist` (WordPress plus PHPCompatibilityWP, `testVersion` 7.4 and up, `minimum_wp_version` 6.2). `composer lint:fix` handles the mechanical part.
+Nothing reported. Not "a few warnings we live with": nothing. The ruleset is `phpcs.xml.dist` (WordPress plus PHPCompatibilityWP, `testVersion` 7.4 and up, `minimum_wp_version` 6.6). `composer lint:fix` handles the mechanical part.
 
 ### Plugin Check
 
-On the built package, in a directory named exactly `rotate-everything`, across all five categories:
+On the built package, in a directory named exactly `rotatile`, across all five categories:
 
 ```bash
 npm run build
-rsync -a --delete --delete-excluded --exclude-from=.distignore ./ dist/rotate-everything/
+rsync -a --delete --delete-excluded --exclude-from=.distignore ./ dist/rotatile/
 # with the package synced into the testbed:
-ddev wp plugin check rotate-everything \
+ddev wp plugin check rotatile \
   --categories=general,plugin_repo,security,performance,accessibility \
   --include-experimental
 ```
@@ -123,7 +123,7 @@ Regenerate the `.pot` from the code rather than editing it. If you add a string:
 
 Maintainers only.
 
-1. Bump the version in **four** places: the `Version:` header in `rotate-everything.php`, `ROTATE_EVERYTHING_VERSION` in the same file, `Stable tag:` in `readme.txt`, and the heading in `CHANGELOG.md`.
+1. Bump the version in **four** places: the `Version:` header in `rotatile.php`, `ROTATILE_VERSION` in the same file, `Stable tag:` in `readme.txt`, and the heading in `CHANGELOG.md`.
 2. Add the release notes to `readme.txt`'s `== Changelog ==` and to `CHANGELOG.md`. Both are checked by the deploy workflow.
 3. Validate `readme.txt` at https://wordpress.org/plugins/developers/readme-validator/ (needs a logged-in wordpress.org session). Two minutes here against several days of waiting if it is rejected.
 4. Merge to `main` and wait for CI to come back green.

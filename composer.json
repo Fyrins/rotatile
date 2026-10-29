@@ -1,5 +1,5 @@
 {
-    "name": "fyrins/rotate-everything",
+    "name": "fyrins/rotatile",
     "description": "Rotate any block by a free angle from the editor sidebar: server-rendered CSS transform, no JavaScript on the front end.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",

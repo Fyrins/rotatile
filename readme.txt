@@ -1,7 +1,7 @@
-=== Rotate Everything ===
+=== Rotatile ===
 Contributors: fyrins
 Tags: block editor, gutenberg, rotate, transform, image
-Requires at least: 6.2
+Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
 Stable tag: 1.0.0
@@ -12,7 +12,7 @@ Tilt a block by any angle from the editor sidebar. The transform is rendered by 
 
 == Description ==
 
-Rotate Everything adds a Rotation panel to the block inspector. Pick an angle, watch the block tilt in the editor, and that is the whole feature. There is no settings page, no account, no dashboard notice and no outgoing request.
+Rotatile adds a Rotation panel to the block inspector. Pick an angle, watch the block tilt in the editor, and that is the whole feature. There is no settings page, no account, no dashboard notice and no outgoing request.
 
 Out of the box the panel is offered on the Image block and nothing else. That restriction is the point rather than an oversight: a tilted paragraph is a paragraph people have to tilt their head to read. If your design needs another block type, one filter opens it up.
 
@@ -37,26 +37,26 @@ No JavaScript. One small stylesheet, requested only on pages that actually conta
 
 **Filters**
 
-Everything is configured in code. `rotate_everything_supported_blocks` sets the block types, `rotate_everything_min_angle` and `rotate_everything_max_angle` set the range, `rotate_everything_step` sets the increment, `rotate_everything_default_angle` sets the starting value, and `rotate_everything_transition_duration` sets or removes the transition. The development README documents each one with an example.
+Everything is configured in code. `rotatile_supported_blocks` sets the block types, `rotatile_min_angle` and `rotatile_max_angle` set the range, `rotatile_step` sets the increment, `rotatile_default_angle` sets the starting value, and `rotatile_transition_duration` sets or removes the transition. The development README documents each one with an example.
 
 **Source code and build**
 
 The editor script shipped in `build/` is compiled from `src/editor.js`. The uncompiled source, the build configuration and the full history live in the public repository:
 
-https://github.com/Fyrins/rotate-everything
+https://github.com/Fyrins/rotatile
 
 The toolchain is [@wordpress/scripts](https://www.npmjs.com/package/@wordpress/scripts), the build tool maintained by the WordPress project, and nothing else. To reproduce the shipped file:
 
-`git clone https://github.com/Fyrins/rotate-everything.git
-cd rotate-everything
+`git clone https://github.com/Fyrins/rotatile.git
+cd rotatile
 npm install
 npm run build`
 
-The front-end stylesheet is not compiled: `assets/css/rotate-everything.css` is written by hand and shipped as it reads.
+The front-end stylesheet is not compiled: `assets/css/rotatile.css` is written by hand and shipped as it reads.
 
 == Installation ==
 
-1. In your admin, go to Plugins, then Add New Plugin, and search for Rotate Everything.
+1. In your admin, go to Plugins, then Add New Plugin, and search for Rotatile.
 2. Install and activate it.
 3. Edit a post or a template, select an Image block, and open Rotation in the block settings sidebar.
 
@@ -72,7 +72,7 @@ Because rotating text is a readability problem rather than a design feature. Any
 
 Add this to your theme's `functions.php` or to a small plugin of your own:
 
-`add_filter( 'rotate_everything_supported_blocks', function ( $blocks ) {
+`add_filter( 'rotatile_supported_blocks', function ( $blocks ) {
 	$blocks[] = 'core/group';
 	return $blocks;
 } );`
@@ -101,11 +101,15 @@ A transform turns the element into a containing block, so `position: fixed` insi
 
 Yes, and it is already off for anyone who has asked their operating system for reduced motion. To remove it for everybody:
 
-`add_filter( 'rotate_everything_transition_duration', '__return_empty_string' );`
+`add_filter( 'rotatile_transition_duration', '__return_empty_string' );`
 
 = Does it phone home? =
 
 No. There is no telemetry, no external asset and no outgoing request of any kind, and no option is written to your database.
+
+= I heard WordPress is adding its own rotation setting. =
+
+It is being worked on in the Gutenberg project, and it is not part of WordPress 7.2. If it ships in a later release, it will store its angle somewhere else and use the CSS `rotate` property rather than `transform`, so the two do not break each other. They do add up, though: set the angle in one place only. Once the core setting is available on your site, it is the better choice for new content.
 
 == Screenshots ==
 

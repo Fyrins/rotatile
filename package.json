@@ -1,5 +1,5 @@
 {
-  "name": "rotate-everything",
+  "name": "rotatile",
   "version": "1.0.0",
   "description": "Rotate any block by a free angle from the editor sidebar. Server-rendered CSS transform, no JavaScript on the front end.",
   "scripts": {
@@ -8,17 +8,17 @@
     "lint:js": "wp-scripts lint-js src",
     "format": "wp-scripts format src",
     "packages-update": "wp-scripts packages-update",
-    "i18n": "wp i18n make-pot . languages/rotate-everything.pot --slug=rotate-everything --domain=rotate-everything --package-name=\"Rotate Everything\" --exclude=vendor,node_modules,build,dist,docs,tests,.github && wp i18n update-po languages/rotate-everything.pot languages/rotate-everything-fr_FR.po && wp i18n make-mo languages/ && wp i18n make-json languages/ --no-purge --pretty-print --use-map='{\"src/editor.js\":\"build/editor.js\"}'"
+    "i18n": "wp i18n make-pot . languages/rotatile.pot --slug=rotatile --domain=rotatile --package-name=\"Rotatile\" --exclude=vendor,node_modules,build,dist,docs,tests,.github && wp i18n update-po languages/rotatile.pot languages/rotatile-fr_FR.po && wp i18n make-mo languages/ && wp i18n make-json languages/ --no-purge --pretty-print --use-map='{\"src/editor.js\":\"build/editor.js\"}'"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Fyrins/rotate-everything.git"
+    "url": "git+https://github.com/Fyrins/rotatile.git"
   },
   "license": "GPL-2.0-or-later",
   "bugs": {
-    "url": "https://github.com/Fyrins/rotate-everything/issues"
+    "url": "https://github.com/Fyrins/rotatile/issues"
   },
-  "homepage": "https://wordpress.org/plugins/rotate-everything/",
+  "homepage": "https://wordpress.org/plugins/rotatile/",
   "private": true,
   "devDependencies": {
     "@wordpress/block-editor": "^17.1.0",

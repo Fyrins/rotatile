@@ -1,5 +1,5 @@
 /**
- * Rotate Everything - block editor integration.
+ * Rotatile - block editor integration.
  *
  * Nothing here writes to the saved markup. The `rotation` attribute is declared
  * without a `source`, which keeps it in the block comment where block validation
@@ -29,17 +29,29 @@ const FALLBACK = {
 /**
  * Rounds a value to a whole number, or returns the fallback.
  *
+ * Reads the value the way the PHP side does, so the preview never shows an
+ * angle the server would not render: only numbers and numeric strings count
+ * (`'12abc'` is rejected, as is_numeric() rejects it), and halves round away
+ * from zero, as PHP's round() does.
+ *
  * @param {*}      value    Value to convert.
  * @param {number} fallback Returned when the value is not a finite number.
  * @return {number} Whole number.
  */
 function toInteger( value, fallback ) {
-	const number = parseFloat( value );
+	const isNumeric =
+		'number' === typeof value ||
+		( 'string' === typeof value && '' !== value.trim() );
+	const number = isNumeric ? Number( value ) : NaN;
 
-	return Number.isFinite( number ) ? Math.round( number ) : fallback;
+	if ( ! Number.isFinite( number ) ) {
+		return fallback;
+	}
+
+	return Math.sign( number ) * Math.round( Math.abs( number ) );
 }
 
-const provided = window.rotateEverythingSettings || {};
+const provided = window.rotatileSettings || {};
 
 /**
  * The supported block types and the angle bounds are decided in PHP, which is
@@ -104,13 +116,13 @@ function RotationPanel( { attributes, setAttributes } ) {
 			title={ _x(
 				'Rotation',
 				'block inspector panel title',
-				'rotate-everything'
+				'rotatile'
 			) }
 			initialOpen={ 0 !== angle }
 		>
 			<RangeControl
 				__nextHasNoMarginBottom
-				label={ __( 'Angle', 'rotate-everything' ) }
+				label={ __( 'Angle', 'rotatile' ) }
 				value={ angle }
 				min={ config.minAngle }
 				max={ config.maxAngle }
@@ -119,7 +131,7 @@ function RotationPanel( { attributes, setAttributes } ) {
 					/* translators: 1: Lowest angle offered, in degrees. 2: Highest angle offered, in degrees. */
 					__(
 						'Between %1$d° and %2$d°. A rotated block keeps its original space on the page, so its corners overlap neighbouring content, and a full-width block at a large angle can push the page sideways. Rotating text also makes that text harder to read.',
-						'rotate-everything'
+						'rotatile'
 					),
 					config.minAngle,
 					config.maxAngle
@@ -134,7 +146,7 @@ function RotationPanel( { attributes, setAttributes } ) {
 			>
 				{
 					/* translators: Button that sets the rotation angle back to zero. */
-					_x( 'Reset', 'button label', 'rotate-everything' )
+					_x( 'Reset', 'button label', 'rotatile' )
 				}
 			</Button>
 		</PanelBody>
@@ -146,7 +158,7 @@ function RotationPanel( { attributes, setAttributes } ) {
  */
 addFilter(
 	'blocks.registerBlockType',
-	'rotate-everything/attribute',
+	'rotatile/attribute',
 	( blockSettings, blockName ) => {
 		if ( ! isSupported( blockName ) ) {
 			return blockSettings;
@@ -184,7 +196,7 @@ addFilter(
  */
 addFilter(
 	'editor.BlockEdit',
-	'rotate-everything/inspector',
+	'rotatile/inspector',
 	createHigherOrderComponent(
 		( BlockEdit ) => ( props ) => {
 			if ( ! isSupported( props.name ) ) {
@@ -215,7 +227,7 @@ addFilter(
  */
 addFilter(
 	'editor.BlockListBlock',
-	'rotate-everything/preview',
+	'rotatile/preview',
 	createHigherOrderComponent(
 		( BlockListBlock ) => ( props ) => {
 			if ( ! isSupported( props.name ) ) {

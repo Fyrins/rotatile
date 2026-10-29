@@ -1,6 +1,6 @@
 # Block cases
 
-The contract of `Rotate_Everything_Renderer::filter_render_block()`, case by
+The contract of `Rotatile_Renderer::filter_render_block()`, case by
 case. Each row is a `$block` array and a `$block_content` string going in, and
 the markup that has to come out.
 
@@ -17,6 +17,10 @@ Two rules cover every row below, and the rest is their consequence:
    byte** unchanged. Not re-serialised, not reformatted, not passed through the
    Tag Processor. Unchanged.
 
+The order of `class` and `style` in the expected output is whatever the Tag
+Processor writes, and it carries no meaning for the browser. The outputs below
+are copied from a real run so they can be compared as text.
+
 ---
 
 ## Transformed
@@ -26,7 +30,7 @@ Two rules cover every row below, and the rest is their consequence:
 ```
 attrs:  { "rotation": -8 }
 in:     <figure class="wp-block-image size-full"><img src="a.jpg" alt=""/></figure>
-out:    <figure class="wp-block-image size-full rotate-everything-rotated" style="transform:rotate(-8deg);"><img src="a.jpg" alt=""/></figure>
+out:    <figure style="transform:rotate(-8deg);" class="wp-block-image size-full rotatile-rotated"><img src="a.jpg" alt=""/></figure>
 ```
 
 The class is appended to the existing ones. The `style` attribute is created.
@@ -36,7 +40,7 @@ The class is appended to the existing ones. The `style` attribute is created.
 ```
 attrs:  { "rotation": 45 }
 in:     <figure class="wp-block-image" style="border-radius:8px;"><img src="a.jpg" alt=""/></figure>
-out:    <figure class="wp-block-image rotate-everything-rotated" style="border-radius:8px;transform:rotate(45deg);"><img src="a.jpg" alt=""/></figure>
+out:    <figure class="wp-block-image rotatile-rotated" style="border-radius:8px;transform:rotate(45deg);"><img src="a.jpg" alt=""/></figure>
 ```
 
 `border-radius` survives. This is the case an implementation that calls
@@ -47,7 +51,7 @@ out:    <figure class="wp-block-image rotate-everything-rotated" style="border-r
 ```
 attrs:  { "rotation": 45 }
 in:     <figure class="wp-block-image" style="border-radius:8px"><img src="a.jpg" alt=""/></figure>
-out:    <figure class="wp-block-image rotate-everything-rotated" style="border-radius:8px;transform:rotate(45deg);"><img src="a.jpg" alt=""/></figure>
+out:    <figure class="wp-block-image rotatile-rotated" style="border-radius:8px;transform:rotate(45deg);"><img src="a.jpg" alt=""/></figure>
 ```
 
 The separator is supplied. `border-radius:8pxtransform:rotate(45deg)` is the
@@ -58,7 +62,7 @@ failure this row exists to catch.
 ```
 attrs:  { "rotation": 10 }
 in:     <figure class="wp-block-image" style="background-image:url(data:image/gif;base64,R0lGOD==)"><img src="a.jpg" alt=""/></figure>
-out:    <figure class="wp-block-image rotate-everything-rotated" style="background-image:url(data:image/gif;base64,R0lGOD==);transform:rotate(10deg);"><img src="a.jpg" alt=""/></figure>
+out:    <figure class="wp-block-image rotatile-rotated" style="background-image:url(data:image/gif;base64,R0lGOD==);transform:rotate(10deg);"><img src="a.jpg" alt=""/></figure>
 ```
 
 The old value is appended to, never parsed. An implementation that splits on
@@ -69,7 +73,7 @@ The old value is appended to, never parsed. An implementation that splits on
 ```
 attrs:  { "rotation": 10 }
 in:     <figure class="wp-block-image" style="transform:translateX(4px);"><img src="a.jpg" alt=""/></figure>
-out:    <figure class="wp-block-image rotate-everything-rotated" style="transform:translateX(4px);transform:rotate(10deg);"><img src="a.jpg" alt=""/></figure>
+out:    <figure class="wp-block-image rotatile-rotated" style="transform:translateX(4px);transform:rotate(10deg);"><img src="a.jpg" alt=""/></figure>
 ```
 
 Both declarations are present and the later one wins, which is the cascade
@@ -81,7 +85,7 @@ parsing the existing value, which case T4 rules out.
 ```
 attrs:  { "rotation": 20 }
 in:     <style>.wp-container-1{gap:0}</style><figure class="wp-block-image"><img src="a.jpg" alt=""/></figure>
-out:    <style>.wp-container-1{gap:0}</style><figure class="wp-block-image rotate-everything-rotated" style="transform:rotate(20deg);"><img src="a.jpg" alt=""/></figure>
+out:    <style>.wp-container-1{gap:0}</style><figure style="transform:rotate(20deg);" class="wp-block-image rotatile-rotated"><img src="a.jpg" alt=""/></figure>
 ```
 
 `<style>`, `<script>`, `<link>` and `<meta>` are skipped. The `<style>` element
@@ -93,18 +97,18 @@ tag.
 ```
 attrs:  { "rotation": 5 }
 in:     <figure><img src="a.jpg" alt=""/></figure>
-out:    <figure class="rotate-everything-rotated" style="transform:rotate(5deg);"><img src="a.jpg" alt=""/></figure>
+out:    <figure class="rotatile-rotated" style="transform:rotate(5deg);"><img src="a.jpg" alt=""/></figure>
 ```
 
 ### T8. Class already present
 
 ```
 attrs:  { "rotation": 5 }
-in:     <figure class="wp-block-image rotate-everything-rotated"><img src="a.jpg" alt=""/></figure>
-out:    <figure class="wp-block-image rotate-everything-rotated" style="transform:rotate(5deg);"><img src="a.jpg" alt=""/></figure>
+in:     <figure class="wp-block-image rotatile-rotated"><img src="a.jpg" alt=""/></figure>
+out:    <figure style="transform:rotate(5deg);" class="wp-block-image rotatile-rotated"><img src="a.jpg" alt=""/></figure>
 ```
 
-The class is added once. Not `rotate-everything-rotated rotate-everything-rotated`.
+The class is added once. Not `rotatile-rotated rotatile-rotated`.
 
 ### T9. Supported block nested inside another block
 
@@ -153,7 +157,7 @@ Angles are whole degrees. The rendered value is never `12.6deg`.
 ### T13. Dynamic block, once it is supported
 
 ```php
-add_filter( 'rotate_everything_supported_blocks', fn( $b ) => array_merge( $b, array( 'core/latest-posts' ) ) );
+add_filter( 'rotatile_supported_blocks', fn( $b ) => array_merge( $b, array( 'core/latest-posts' ) ) );
 ```
 
 ```
@@ -164,8 +168,8 @@ add_filter( 'rotate_everything_supported_blocks', fn( $b ) => array_merge( $b, a
 Rendered, verbatim:
 
 ```html
-<ul style="transform:rotate(6deg);" class="wp-block-latest-posts__list wp-block-latest-posts is-layout-flow wp-block-latest-posts-is-layout-flow rotate-everything-rotated">
-<ul style="transform:rotate(-4deg);" class="wp-block-archives-list wp-block-archives rotate-everything-rotated">
+<ul style="transform:rotate(6deg);" class="wp-block-latest-posts__list wp-block-latest-posts is-layout-flow wp-block-latest-posts-is-layout-flow rotatile-rotated">
+<ul style="transform:rotate(-4deg);" class="wp-block-archives-list wp-block-archives rotatile-rotated">
 ```
 
 A dynamic block reaches `render_block` with its callback's output already built,
@@ -218,7 +222,7 @@ the rendered HTML, not by reasoning about it.
 
 ## Angle sanitizing, in one table
 
-`Rotate_Everything_Settings::sanitize_angle()` with the default range.
+`Rotatile_Settings::sanitize_angle()` with the default range.
 
 | Input | Result | Rendered |
 |---|---|---|
@@ -249,19 +253,19 @@ the rendered HTML, not by reasoning about it.
 
 | # | Filter | Return | Expected |
 |---|---|---|---|
-| F1 | `rotate_everything_supported_blocks` | `array()` | Panel offered nowhere, nothing rendered, plugin effectively idle |
-| F2 | `rotate_everything_supported_blocks` | `'core/image'` (a string) | Falls back to the default array |
-| F3 | `rotate_everything_supported_blocks` | `array( 'core/image', 42, '', ' core/group ' )` | `array( 'core/image', 'core/group' )` |
-| F4 | `rotate_everything_min_angle` / `max` | `-45` / `45` | Control clamps to that range; a saved `90` renders as `45deg` |
-| F5 | `rotate_everything_min_angle` / `max` | `90` / `-90` (inverted) | Both fall back to `-359` / `359` |
-| F6 | `rotate_everything_step` | `0` | Step is `1` |
-| F7 | `rotate_everything_step` | `0.5` | Step is `1`; angles stay whole degrees |
-| F8 | `rotate_everything_default_angle` | `-3` | Supported blocks with no explicit angle render at `-3deg` |
-| F9 | `rotate_everything_transition_duration` | `'400ms'` | Custom property emitted, `--rotate-everything-duration:400ms` |
-| F10 | `rotate_everything_transition_duration` | `''` or `'0'` | `--rotate-everything-duration:0s` |
-| F11 | `rotate_everything_transition_duration` | `'1s;}body{display:none'` | Falls back to `0.2s`, nothing injected |
-| F12 | `rotate_everything_transition_duration` | `'calc(1s * 2)'` | Falls back to `0.2s` |
-| F13 | `rotate_everything_transition_duration` | `array()` | Falls back to `0.2s` |
+| F1 | `rotatile_supported_blocks` | `array()` | Panel offered nowhere, nothing rendered, plugin effectively idle |
+| F2 | `rotatile_supported_blocks` | `'core/image'` (a string) | Falls back to the default array |
+| F3 | `rotatile_supported_blocks` | `array( 'core/image', 42, '', ' core/group ' )` | `array( 'core/image', 'core/group' )` |
+| F4 | `rotatile_min_angle` / `max` | `-45` / `45` | Control clamps to that range; a saved `90` renders as `45deg` |
+| F5 | `rotatile_min_angle` / `max` | `90` / `-90` (inverted) | Both fall back to `-359` / `359` |
+| F6 | `rotatile_step` | `0` | Step is `1` |
+| F7 | `rotatile_step` | `0.5` | Step is `1`; angles stay whole degrees |
+| F8 | `rotatile_default_angle` | `-3` | Supported blocks with no explicit angle render at `-3deg` |
+| F9 | `rotatile_transition_duration` | `'400ms'` | Custom property emitted, `--rotatile-duration:400ms` |
+| F10 | `rotatile_transition_duration` | `''` or `'0'` | `--rotatile-duration:0s` |
+| F11 | `rotatile_transition_duration` | `'1s;}body{display:none'` | Falls back to `0.2s`, nothing injected |
+| F12 | `rotatile_transition_duration` | `'calc(1s * 2)'` | Falls back to `0.2s` |
+| F13 | `rotatile_transition_duration` | `array()` | Falls back to `0.2s` |
 
 F11 is the one to read in the page source. A non-default duration is emitted as
 a custom property, never as a `transition` override, so it cannot outrank the
@@ -274,12 +278,12 @@ none.
 
 | # | Case | Expected |
 |---|---|---|
-| A1 | Page with a rotated block | `rotate-everything.css` referenced once |
+| A1 | Page with a rotated block | `rotatile.css` referenced once |
 | A2 | Page with a supported block at angle `0` | Stylesheet not referenced at all |
 | A3 | Page with no supported block | Stylesheet not referenced at all |
 | A4 | Page with three rotated blocks | Stylesheet referenced once |
 | A5 | Any front-end page | No script from this plugin, in `<head>` or in the footer |
-| A6 | Editor | `editor.js` enqueued, preceded by `window.rotateEverythingSettings` |
+| A6 | Editor | `editor.js` enqueued, preceded by `window.rotatileSettings` |
 
 Check A1 through A4 with `curl | grep`, not with the browser's network panel: a
 cache plugin or a service worker makes the panel lie.
@@ -356,12 +360,12 @@ the `maxScrollX` check with a `scrollWidth` check.
 
 | # | Case | Expected |
 |---|---|---|
-| P1 | `rsync --exclude-from=.distignore` | No hidden file or directory in `build/rotate-everything/` |
+| P1 | `rsync --exclude-from=.distignore` | No hidden file or directory in `build/rotatile/` |
 | P2 | Same | No `vendor/`, `docs/`, `tests/`, `composer.json`, `composer.lock`, `phpcs.xml.dist`, `README.md`, `CHANGELOG.md`, `CONTRIBUTING.md` |
-| P3 | Same | `readme.txt`, `LICENSE`, `languages/`, `assets/`, `includes/`, `rotate-everything.php` all present |
+| P3 | Same | `readme.txt`, `LICENSE`, `languages/`, `assets/`, `includes/`, `rotatile.php` all present |
 | P4 | A log directory dropped at the root by some tool | Excluded by the `.*` rule on the first line |
 | P5 | Re-sync after deleting a file from the source | The file is gone from the target, which is what `--delete-excluded` buys |
-| P6 | Version consistency | Plugin header, `ROTATE_EVERYTHING_VERSION`, readme `Stable tag` and the Git tag all agree |
+| P6 | Version consistency | Plugin header, `ROTATILE_VERSION`, readme `Stable tag` and the Git tag all agree |
 
 ---
 

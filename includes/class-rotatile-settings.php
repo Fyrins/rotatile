@@ -2,7 +2,7 @@
 /**
  * Configuration values and the sanitizing that guards them.
  *
- * @package RotateEverything
+ * @package Rotatile
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
  * reaches a CSS declaration without being validated first. The same array is
  * handed to the editor script, so PHP and JavaScript cannot drift apart.
  */
-final class Rotate_Everything_Settings {
+final class Rotatile_Settings {
 
 	/**
 	 * Lowest angle offered by default, in degrees.
@@ -69,6 +69,19 @@ final class Rotate_Everything_Settings {
 	const CSS_TIME_PATTERN = '/^[0-9]*\.?[0-9]+m?s$/';
 
 	/**
+	 * Resolved values, kept for the rest of the request.
+	 *
+	 * The render_block filter runs for every block on the page, and each call
+	 * asks for the supported blocks and, for a rotated one, the angle range
+	 * several times over. The filters are resolved once instead. Nothing reads
+	 * these before `init`, so every callback a theme or plugin adds is in
+	 * place by the time the first value is stored.
+	 *
+	 * @var array<string,mixed>
+	 */
+	private static $resolved = array();
+
+	/**
 	 * Returns the block types the Rotation panel is offered on.
 	 *
 	 * The default is deliberately a single block type. Rotating running text
@@ -78,6 +91,10 @@ final class Rotate_Everything_Settings {
 	 * @return string[] List of block names, possibly empty.
 	 */
 	public static function get_supported_blocks() {
+		if ( isset( self::$resolved['supported_blocks'] ) ) {
+			return self::$resolved['supported_blocks'];
+		}
+
 		/**
 		 * Filters the block types that can be rotated.
 		 *
@@ -85,10 +102,12 @@ final class Rotate_Everything_Settings {
 		 *
 		 * @param string[] $blocks Block names, for example `core/image`.
 		 */
-		$blocks = apply_filters( 'rotate_everything_supported_blocks', self::DEFAULT_SUPPORTED_BLOCKS );
+		$blocks = apply_filters( 'rotatile_supported_blocks', self::DEFAULT_SUPPORTED_BLOCKS );
 
 		if ( ! is_array( $blocks ) ) {
-			return self::DEFAULT_SUPPORTED_BLOCKS;
+			self::$resolved['supported_blocks'] = self::DEFAULT_SUPPORTED_BLOCKS;
+
+			return self::$resolved['supported_blocks'];
 		}
 
 		$sanitized = array();
@@ -107,7 +126,9 @@ final class Rotate_Everything_Settings {
 			$sanitized[] = $block_name;
 		}
 
-		return array_values( array_unique( $sanitized ) );
+		self::$resolved['supported_blocks'] = array_values( array_unique( $sanitized ) );
+
+		return self::$resolved['supported_blocks'];
 	}
 
 	/**
@@ -119,6 +140,10 @@ final class Rotate_Everything_Settings {
 	 * @return array{min:int,max:int} Angle bounds in degrees.
 	 */
 	public static function get_angle_range() {
+		if ( isset( self::$resolved['angle_range'] ) ) {
+			return self::$resolved['angle_range'];
+		}
+
 		/**
 		 * Filters the lowest angle the control offers.
 		 *
@@ -126,7 +151,7 @@ final class Rotate_Everything_Settings {
 		 *
 		 * @param int $min_angle Lowest angle, in degrees.
 		 */
-		$min = apply_filters( 'rotate_everything_min_angle', self::DEFAULT_MIN_ANGLE );
+		$min = apply_filters( 'rotatile_min_angle', self::DEFAULT_MIN_ANGLE );
 
 		/**
 		 * Filters the highest angle the control offers.
@@ -135,22 +160,22 @@ final class Rotate_Everything_Settings {
 		 *
 		 * @param int $max_angle Highest angle, in degrees.
 		 */
-		$max = apply_filters( 'rotate_everything_max_angle', self::DEFAULT_MAX_ANGLE );
+		$max = apply_filters( 'rotatile_max_angle', self::DEFAULT_MAX_ANGLE );
 
 		$min = self::to_degrees( $min, self::DEFAULT_MIN_ANGLE );
 		$max = self::to_degrees( $max, self::DEFAULT_MAX_ANGLE );
 
 		if ( $min >= $max ) {
-			return array(
-				'min' => self::DEFAULT_MIN_ANGLE,
-				'max' => self::DEFAULT_MAX_ANGLE,
-			);
+			$min = self::DEFAULT_MIN_ANGLE;
+			$max = self::DEFAULT_MAX_ANGLE;
 		}
 
-		return array(
+		self::$resolved['angle_range'] = array(
 			'min' => $min,
 			'max' => $max,
 		);
+
+		return self::$resolved['angle_range'];
 	}
 
 	/**
@@ -170,7 +195,7 @@ final class Rotate_Everything_Settings {
 		 *
 		 * @param int $step Increment, in degrees.
 		 */
-		$step = apply_filters( 'rotate_everything_step', self::DEFAULT_STEP );
+		$step = apply_filters( 'rotatile_step', self::DEFAULT_STEP );
 
 		$step = self::to_degrees( $step, self::DEFAULT_STEP );
 		$step = abs( $step );
@@ -180,6 +205,13 @@ final class Rotate_Everything_Settings {
 
 	/**
 	 * Returns the angle applied to a block that carries no usable value.
+	 *
+	 * This is also the attribute default the editor registers, and the block
+	 * editor leaves an attribute equal to its default out of the block
+	 * comment. A block without `rotation` is therefore a block at this angle,
+	 * including blocks saved before the filter was added. Skipping those
+	 * blocks in the renderer would show a block set to the default angle
+	 * rotated in the editor and straight on the front end.
 	 *
 	 * @return int Angle in degrees, inside the configured range.
 	 */
@@ -191,7 +223,7 @@ final class Rotate_Everything_Settings {
 		 *
 		 * @param int $default_angle Angle, in degrees.
 		 */
-		$angle = apply_filters( 'rotate_everything_default_angle', self::DEFAULT_ANGLE );
+		$angle = apply_filters( 'rotatile_default_angle', self::DEFAULT_ANGLE );
 
 		return self::clamp( self::to_degrees( $angle, self::DEFAULT_ANGLE ) );
 	}
@@ -214,7 +246,7 @@ final class Rotate_Everything_Settings {
 		 *
 		 * @param string $duration CSS time value, for example `0.2s` or `200ms`.
 		 */
-		$duration = apply_filters( 'rotate_everything_transition_duration', self::DEFAULT_TRANSITION_DURATION );
+		$duration = apply_filters( 'rotatile_transition_duration', self::DEFAULT_TRANSITION_DURATION );
 
 		if ( ! is_scalar( $duration ) || is_bool( $duration ) ) {
 			return self::DEFAULT_TRANSITION_DURATION;
@@ -255,7 +287,7 @@ final class Rotate_Everything_Settings {
 			return self::get_default_angle();
 		}
 
-		return self::clamp( (int) round( $angle ) );
+		return self::clamp( self::round_to_int( $angle ) );
 	}
 
 	/**
@@ -293,7 +325,22 @@ final class Rotate_Everything_Settings {
 			return $fallback;
 		}
 
-		return (int) round( $number );
+		return self::round_to_int( $number );
+	}
+
+	/**
+	 * Rounds a finite float to an integer without overflowing.
+	 *
+	 * Casting a float outside the integer range is undefined in PHP, so a
+	 * forged `1e30` could come out as anything, including 0, before clamp()
+	 * ever sees it. Bounding it first keeps the result on the right side of
+	 * the range; a million degrees is far past any angle the range allows.
+	 *
+	 * @param float $number Finite number.
+	 * @return int Rounded value.
+	 */
+	private static function round_to_int( $number ) {
+		return (int) round( max( -1000000.0, min( 1000000.0, $number ) ) );
 	}
 
 	/**

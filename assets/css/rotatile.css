@@ -1,5 +1,5 @@
 /*!
- * Rotate Everything - front-end styles.
+ * Rotatile - front-end styles.
  *
  * The rotation itself is an inline transform written by the server, so a block
  * stays tilted even if this file never loads. What is left here is only what an
@@ -10,9 +10,14 @@
  * on a page that actually contains a rotated block.
  */
 
-.rotate-everything-rotated {
+/*
+ * The class is doubled to raise specificity to 0,2,0, so a theme rule such as
+ * `.wp-block-image { transition: ... }` does not silently reset the origin or
+ * the transition of a rotated block.
+ */
+.rotatile-rotated.rotatile-rotated {
 	transform-origin: 50% 50%;
-	transition: transform var( --rotate-everything-duration, 0.2s ) ease;
+	transition: transform var( --rotatile-duration, 0.2s ) ease;
 }
 
 /*
@@ -23,7 +28,7 @@
  */
 @media ( prefers-reduced-motion: reduce ) {
 
-	.rotate-everything-rotated {
+	.rotatile-rotated.rotatile-rotated {
 		transition: none;
 	}
 }

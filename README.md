@@ -1,12 +1,12 @@
-# Rotate Everything
+# Rotatile
 
 Rotate any block by a free angle from the editor sidebar. Server-rendered CSS transform, no JavaScript on the front end.
 
-[![CI](https://github.com/Fyrins/rotate-everything/actions/workflows/ci.yml/badge.svg)](https://github.com/Fyrins/rotate-everything/actions/workflows/ci.yml)
+[![CI](https://github.com/Fyrins/rotatile/actions/workflows/ci.yml/badge.svg)](https://github.com/Fyrins/rotatile/actions/workflows/ci.yml)
 
-Plugin directory page: https://wordpress.org/plugins/rotate-everything/
+Plugin directory page: https://wordpress.org/plugins/rotatile/
 
-- **Requires WordPress** 6.2 or later
+- **Requires WordPress** 6.6 or later
 - **Requires PHP** 7.4 or later
 - **License** GPL-2.0-or-later
 
@@ -65,9 +65,9 @@ The old value is deliberately **not** parsed. Splitting it on `;` would corrupt 
 
 ### Every value that reaches CSS is validated first
 
-`$block['attrs']` is parsed out of a block comment and never validated by WordPress. The angle can arrive as a string, an array, a boolean, `null`, `INF`, or a number far outside the range. `Rotate_Everything_Settings::sanitize_angle()` rejects anything that is not a finite number, rounds what is left, and confines it to the configured bounds. Typing the parameter as `int` instead, as an earlier prototype did, raises a `TypeError` on a forged value.
+`$block['attrs']` is parsed out of a block comment and never validated by WordPress. The angle can arrive as a string, an array, a boolean, `null`, `INF`, or a number far outside the range. `Rotatile_Settings::sanitize_angle()` rejects anything that is not a finite number, rounds what is left, and confines it to the configured bounds. Typing the parameter as `int` instead, as an earlier prototype did, raises a `TypeError` on a forged value.
 
-The same applies to filtered values. `rotate_everything_transition_duration` ends up concatenated into a stylesheet, so it is matched against `/^[0-9]*\.?[0-9]+m?s$/` and replaced by the default if it does not match. Nothing reaches a CSS declaration through escaping alone.
+The same applies to filtered values. `rotatile_transition_duration` ends up concatenated into a stylesheet, so it is matched against `/^[0-9]*\.?[0-9]+m?s$/` and replaced by the default if it does not match. Nothing reaches a CSS declaration through escaping alone.
 
 ### Effects of `transform` that the plugin cannot remove
 
@@ -96,7 +96,7 @@ What is left is to say so where the decision is made. The angle control's help t
 
 Three things the plugin deliberately does not do:
 
-- No `transform: inherit` on descendants. An earlier prototype shipped `.rotate-everything-rotated * { transform: inherit; }`, which re-applies the transformation to every child, including children of third-party blocks.
+- No `transform: inherit` on descendants. An earlier prototype shipped `.rotatile-rotated * { transform: inherit; }`, which re-applies the transformation to every child, including children of third-party blocks.
 - No permanent `will-change: transform`. It is a promise of compositing that the browser keeps in memory forever, at a GPU cost, for no gain on a static rotation.
 - No change to the focus indicator. It follows the rotated box, which is the expected behaviour.
 
@@ -110,13 +110,13 @@ Measured on WordPress 7.1 with Twenty Twenty-Five (block theme) and Twenty Twent
 
 ### Why those minimum versions
 
-**WordPress 6.2** is the release `WP_HTML_Tag_Processor` shipped in. The five methods this plugin calls are all `@since 6.2.0`, checked in the WordPress 7.1.1 source rather than taken from memory: `next_tag()`, `get_tag()`, `get_attribute()`, `set_attribute()` and `get_updated_html()`.
+**WordPress 6.6** is set by the editor bundle, not by the PHP. `@wordpress/scripts` compiles JSX against the automatic runtime, so `build/editor.asset.php` lists `react-jsx-runtime` among the dependencies, and core only registers that handle from 6.6 on (checked in the `script-loader.php` of the 6.5 and 6.6 branches of wordpress-develop). Below 6.6 WordPress drops a script whose dependency is missing without a word, and the Rotation panel would simply never appear. An earlier version declared 6.2 and had exactly that bug between 6.2 and 6.5.
 
-`has_class()` and `add_class()` would be more natural for adding a class, but they are `@since 6.4.0`, so the class is added by hand through `get_attribute()` and `set_attribute()` instead of raising the floor by two releases for nothing.
+The PHP side alone would run on 6.2: `WP_HTML_Tag_Processor` shipped there, and the six methods this plugin calls, `next_tag()`, `get_tag()`, `get_attribute()`, `set_attribute()`, `add_class()` and `get_updated_html()`, are all `@since 6.2.0`.
 
 **PHP 7.4** is WordPress's own floor, read from `https://api.wordpress.org/core/version-check/1.7/`, which reports `php_version: 7.4` for 7.1.1. The code uses no syntax newer than PHP 7.0, so the declared value is a support commitment aligned with core rather than a technical constraint. The CI matrix covers 7.4, 8.0, 8.1, 8.2, 8.3 and 8.4.
 
-One consequence worth knowing: `str_contains()` is available despite the PHP 7.4 floor, because WordPress has polyfilled it since 5.9, which is below the 6.2 floor.
+One consequence worth knowing: `str_contains()` is available despite the PHP 7.4 floor, because WordPress has polyfilled it since 5.9, which is below the 6.6 floor.
 
 ### The build, and what it is allowed to touch
 
@@ -124,7 +124,7 @@ The editor script is JSX in `src/editor.js`, compiled by [`@wordpress/scripts`](
 
 Three consequences worth knowing before touching any of it.
 
-**The bundle is not in the repository.** `build/` is in `.gitignore`. CI builds it before assembling the package, and the deploy workflow builds it before publishing and refuses to publish without it. A fresh clone has no `build/`, so `Rotate_Everything_Assets::enqueue_editor_assets()` bails out quietly and the Rotation panel does not appear until you run `npm run build`. That silence is deliberate: the plugin adds no admin notice.
+**The bundle is not in the repository.** `build/` is in `.gitignore`. CI builds it before assembling the package, and the deploy workflow builds it before publishing and refuses to publish without it. A fresh clone has no `build/`, so `Rotatile_Assets::enqueue_editor_assets()` bails out quietly and the Rotation panel does not appear until you run `npm run build`. That silence is deliberate: the plugin adds no admin notice.
 
 **Dependencies come from the asset file, not from a hand-written list.** `build/editor.asset.php` is generated by webpack and declares both the script handles and a content hash used for cache busting. Writing that list by hand is how a plugin ends up loading before a package it needs; the first version of this plugin listed `wp-blocks` and `wp-element`, which are not used, and missed `react-jsx-runtime`, which is.
 
@@ -136,13 +136,13 @@ Guideline 4 requires the source and the toolchain to be available. They are: the
 
 All configuration is code. There is no settings page and no option is written to the database.
 
-### `rotate_everything_supported_blocks`
+### `rotatile_supported_blocks`
 
 Block types offered the Rotation panel. Default `array( 'core/image' )`.
 
 ```php
 add_filter(
-	'rotate_everything_supported_blocks',
+	'rotatile_supported_blocks',
 	function ( $blocks ) {
 		$blocks[] = 'core/group';
 		$blocks[] = 'core/gallery';
@@ -154,47 +154,47 @@ add_filter(
 
 Returning an empty array switches the plugin off without deactivating it. Non-string entries are dropped, values are trimmed, and duplicates are removed. This list is read by the renderer and handed to the editor script through `wp_add_inline_script()`, so there is one list and it cannot drift.
 
-### `rotate_everything_min_angle` / `rotate_everything_max_angle`
+### `rotatile_min_angle` / `rotatile_max_angle`
 
 Inclusive bounds of the angle control, in degrees. Defaults `-359` and `359`.
 
 ```php
-add_filter( 'rotate_everything_min_angle', fn() => -45 );
-add_filter( 'rotate_everything_max_angle', fn() => 45 );
+add_filter( 'rotatile_min_angle', fn() => -45 );
+add_filter( 'rotatile_max_angle', fn() => 45 );
 ```
 
 Both are rounded to whole degrees. If the range comes out inverted or empty, both bounds fall back to their defaults rather than leaving a control with no valid value.
 
-### `rotate_everything_step`
+### `rotatile_step`
 
 Increment of the angle control, in degrees. Default `1`, minimum `1`.
 
 ```php
-add_filter( 'rotate_everything_step', fn() => 15 );
+add_filter( 'rotatile_step', fn() => 15 );
 ```
 
 Angles are whole degrees throughout the plugin. A fractional step is rounded up to 1.
 
-### `rotate_everything_default_angle`
+### `rotatile_default_angle`
 
 Angle used by a block that carries no usable value. Default `0`.
 
 ```php
-add_filter( 'rotate_everything_default_angle', fn() => -3 );
+add_filter( 'rotatile_default_angle', fn() => -3 );
 ```
 
 Worth understanding before you use it: this is the attribute default, so every supported block without an explicit angle is rendered at this angle, including blocks saved before the filter existed. At the default of `0` the renderer returns the markup untouched.
 
-### `rotate_everything_transition_duration`
+### `rotatile_transition_duration`
 
 Duration of the front-end `transform` transition, as a CSS time value. Default `'0.2s'`.
 
 ```php
 // Slower.
-add_filter( 'rotate_everything_transition_duration', fn() => '400ms' );
+add_filter( 'rotatile_transition_duration', fn() => '400ms' );
 
 // Off for everybody. It is already off under prefers-reduced-motion.
-add_filter( 'rotate_everything_transition_duration', '__return_empty_string' );
+add_filter( 'rotatile_transition_duration', '__return_empty_string' );
 ```
 
 The value is validated against `/^[0-9]*\.?[0-9]+m?s$/`. Anything else, including `calc()` and scientific notation, falls back to the default. A non-default value is emitted as a custom property rather than as a `transition` override, so it cannot outrank the reduced-motion rule.
@@ -204,18 +204,18 @@ The value is validated against `/^[0-9]*\.?[0-9]+m?s$/`. Anything else, includin
 The release on wordpress.org is the supported install path. To run the development copy:
 
 ```bash
-git clone git@github.com:Fyrins/rotate-everything.git
-cd rotate-everything
+git clone git@github.com:Fyrins/rotatile.git
+cd rotatile
 composer install          # PHPCS only; the plugin has no runtime PHP dependency
 npm install               # @wordpress/scripts
 npm run build             # produces build/editor.js
 ```
 
-Then symlink or copy the directory into `wp-content/plugins/rotate-everything`. The directory name matters: Plugin Check infers the text domain from it.
+Then symlink or copy the directory into `wp-content/plugins/rotatile`. The directory name matters: Plugin Check infers the text domain from it.
 
 `npm run build` is required. `build/` is not in the repository, so without it the plugin activates but the Rotation panel never appears, silently. Use `npm start` to rebuild on save while working on `src/editor.js`.
 
-`assets/css/rotate-everything.css` is not compiled and ships as it reads.
+`assets/css/rotatile.css` is not compiled and ships as it reads.
 
 ## Checks
 
@@ -227,13 +227,13 @@ npm run lint:js           # ESLint with the WordPress config, plus Prettier
 npm run format            # applies the formatting
 ```
 
-Plugin Check has to run against the **built package**, in a directory named exactly `rotate-everything`. Run on the source tree it reports the development files, and under a different directory name it infers the wrong text domain and buries the real findings:
+Plugin Check has to run against the **built package**, in a directory named exactly `rotatile`. Run on the source tree it reports the development files, and under a different directory name it infers the wrong text domain and buries the real findings:
 
 ```bash
 npm run build
-rsync -a --delete --delete-excluded --exclude-from=.distignore ./ dist/rotate-everything/
+rsync -a --delete --delete-excluded --exclude-from=.distignore ./ dist/rotatile/
 # then, in a WordPress install with the plugin-check plugin active:
-wp plugin check rotate-everything \
+wp plugin check rotatile \
   --categories=general,plugin_repo,security,performance,accessibility \
   --include-experimental
 ```
