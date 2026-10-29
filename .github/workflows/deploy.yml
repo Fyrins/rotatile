@@ -37,18 +37,18 @@ jobs:
           TAG_VERSION="${TAG_NAME#v}"
           echo "TAG_VERSION=$TAG_VERSION" >> "$GITHUB_ENV"
 
-          HEADER_VERSION=$(awk '/^ \* Version:/ { print $3; exit }' rotate-everything.php)
-          CONSTANT_VERSION=$(awk -F"'" '/^define\( .ROTATE_EVERYTHING_VERSION./ { print $4; exit }' rotate-everything.php)
+          HEADER_VERSION=$(awk '/^ \* Version:/ { print $3; exit }' rotatile.php)
+          CONSTANT_VERSION=$(awk -F"'" '/^define\( .ROTATILE_VERSION./ { print $4; exit }' rotatile.php)
           README_VERSION=$(awk '/^Stable tag:/ { print $3; exit }' readme.txt)
 
           echo "Git tag .................. $TAG_VERSION"
           echo "Plugin header ............ $HEADER_VERSION"
-          echo "ROTATE_EVERYTHING_VERSION  $CONSTANT_VERSION"
+          echo "ROTATILE_VERSION  $CONSTANT_VERSION"
           echo "readme.txt Stable tag .... $README_VERSION"
 
           STATUS=0
           for pair in "plugin header:$HEADER_VERSION" \
-                      "ROTATE_EVERYTHING_VERSION:$CONSTANT_VERSION" \
+                      "ROTATILE_VERSION:$CONSTANT_VERSION" \
                       "readme.txt Stable tag:$README_VERSION"; do
             label="${pair%%:*}"
             value="${pair#*:}"
@@ -104,7 +104,7 @@ jobs:
           test -f build/editor.js
           test -f build/editor.asset.php
           EXPECTED=$(php -r "echo md5('build/editor.js');")
-          if [ ! -f "languages/rotate-everything-fr_FR-$EXPECTED.json" ]; then
+          if [ ! -f "languages/rotatile-fr_FR-$EXPECTED.json" ]; then
             echo "::error::Translation JSON does not match build/editor.js. Run npm run i18n."
             exit 1
           fi
@@ -121,7 +121,7 @@ jobs:
         env:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-          SLUG: rotate-everything
+          SLUG: rotatile
 
       # Only after the directory has the release, so a failed publish does not
       # leave a GitHub release pointing at something that was never shipped.
@@ -144,7 +144,7 @@ jobs:
             exit 1
           fi
 
-          printf '%s\n\nOn the plugin directory: https://wordpress.org/plugins/rotate-everything/\n' \
+          printf '%s\n\nOn the plugin directory: https://wordpress.org/plugins/rotatile/\n' \
             "$NOTES" > "$RUNNER_TEMP/notes.md"
 
           gh release create "$TAG_NAME" \

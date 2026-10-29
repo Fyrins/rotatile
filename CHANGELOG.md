@@ -23,10 +23,10 @@ First release.
 - Front-end stylesheet enqueued only from `render_block`, so a page without a
   rotated block carries no reference to it.
 - Transition neutralised under `@media (prefers-reduced-motion: reduce)`.
-- Filters for every configurable value: `rotate_everything_supported_blocks`,
-  `rotate_everything_min_angle`, `rotate_everything_max_angle`,
-  `rotate_everything_step`, `rotate_everything_default_angle` and
-  `rotate_everything_transition_duration`.
+- Filters for every configurable value: `rotatile_supported_blocks`,
+  `rotatile_min_angle`, `rotatile_max_angle`,
+  `rotatile_step`, `rotatile_default_angle` and
+  `rotatile_transition_duration`.
 - French translation.
 
 ### Notes
@@ -45,5 +45,5 @@ First release.
   text hurts legibility, so widening the list is an explicit decision made
   through a filter.
 
-[Unreleased]: https://github.com/Fyrins/rotate-everything/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/Fyrins/rotate-everything/releases/tag/v1.0.0
+[Unreleased]: https://github.com/Fyrins/rotatile/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/Fyrins/rotatile/releases/tag/v1.0.0

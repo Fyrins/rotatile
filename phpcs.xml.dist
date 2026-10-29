@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<ruleset name="Rotate Everything">
-	<description>Coding standards for the Rotate Everything plugin.</description>
+<ruleset name="Rotatile">
+	<description>Coding standards for the Rotatile plugin.</description>
 
 	<file>.</file>
 
@@ -22,11 +22,12 @@
 	<arg value="sp"/>
 
 	<!--
-		The plugin targets WordPress 6.2 because that is the release the HTML
-		Tag Processor shipped in, and PHP 7.4 and up. Declaring both here keeps
-		the sniffs about deprecated functions and about newer syntax honest.
+		The plugin targets WordPress 6.6, the first release that registers the
+		react-jsx-runtime script the compiled editor bundle depends on, and PHP
+		7.4 and up. Declaring both here keeps the sniffs about deprecated
+		functions and about newer syntax honest.
 	-->
-	<config name="minimum_wp_version" value="6.2"/>
+	<config name="minimum_wp_version" value="6.6"/>
 	<config name="testVersion" value="7.4-"/>
 
 	<rule ref="WordPress"/>
@@ -34,9 +35,9 @@
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
 			<property name="prefixes" type="array">
-				<element value="rotate_everything"/>
-				<element value="ROTATE_EVERYTHING"/>
-				<element value="Rotate_Everything"/>
+				<element value="rotatile"/>
+				<element value="ROTATILE"/>
+				<element value="Rotatile"/>
 			</property>
 		</properties>
 	</rule>
@@ -44,7 +45,7 @@
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
-				<element value="rotate-everything"/>
+				<element value="rotatile"/>
 			</property>
 		</properties>
 	</rule>

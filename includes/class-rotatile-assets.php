@@ -2,7 +2,7 @@
 /**
  * Asset registration for the editor and the front end.
  *
- * @package RotateEverything
+ * @package Rotatile
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -25,21 +25,21 @@ defined( 'ABSPATH' ) || exit;
  * Either way nothing depends on the timing, because the rotation itself is an
  * inline declaration written into the markup.
  */
-final class Rotate_Everything_Assets {
+final class Rotatile_Assets {
 
 	/**
 	 * Handle of the editor script.
 	 *
 	 * @var string
 	 */
-	const EDITOR_SCRIPT_HANDLE = 'rotate-everything-editor';
+	const EDITOR_SCRIPT_HANDLE = 'rotatile-editor';
 
 	/**
 	 * Handle of the front-end stylesheet.
 	 *
 	 * @var string
 	 */
-	const FRONT_STYLE_HANDLE = 'rotate-everything';
+	const FRONT_STYLE_HANDLE = 'rotatile';
 
 	/**
 	 * Custom property the stylesheet reads the transition duration from.
@@ -51,7 +51,7 @@ final class Rotate_Everything_Assets {
 	 *
 	 * @var string
 	 */
-	const DURATION_CUSTOM_PROPERTY = '--rotate-everything-duration';
+	const DURATION_CUSTOM_PROPERTY = '--rotatile-duration';
 
 	/**
 	 * Enqueues the front-end stylesheet, once, on demand.
@@ -80,14 +80,14 @@ final class Rotate_Everything_Assets {
 	private static function register_front_style() {
 		wp_register_style(
 			self::FRONT_STYLE_HANDLE,
-			plugins_url( 'assets/css/rotate-everything.css', ROTATE_EVERYTHING_FILE ),
+			plugins_url( 'assets/css/rotatile.css', ROTATILE_FILE ),
 			array(),
-			ROTATE_EVERYTHING_VERSION
+			ROTATILE_VERSION
 		);
 
-		$duration = Rotate_Everything_Settings::get_transition_duration();
+		$duration = Rotatile_Settings::get_transition_duration();
 
-		if ( Rotate_Everything_Settings::DEFAULT_TRANSITION_DURATION === $duration ) {
+		if ( Rotatile_Settings::DEFAULT_TRANSITION_DURATION === $duration ) {
 			return;
 		}
 
@@ -98,7 +98,7 @@ final class Rotate_Everything_Assets {
 		 */
 		wp_add_inline_style(
 			self::FRONT_STYLE_HANDLE,
-			'.rotate-everything-rotated{' . self::DURATION_CUSTOM_PROPERTY . ':' . $duration . ';}'
+			'.rotatile-rotated{' . self::DURATION_CUSTOM_PROPERTY . ':' . $duration . ';}'
 		);
 	}
 
@@ -134,7 +134,7 @@ final class Rotate_Everything_Assets {
 	 * @return void
 	 */
 	public static function enqueue_editor_assets() {
-		$asset_file = ROTATE_EVERYTHING_PATH . self::EDITOR_ASSET_PATH;
+		$asset_file = ROTATILE_PATH . self::EDITOR_ASSET_PATH;
 
 		if ( ! file_exists( $asset_file ) ) {
 			return;
@@ -147,11 +147,11 @@ final class Rotate_Everything_Assets {
 			: array();
 		$version      = ( is_array( $asset ) && isset( $asset['version'] ) && is_string( $asset['version'] ) )
 			? $asset['version']
-			: ROTATE_EVERYTHING_VERSION;
+			: ROTATILE_VERSION;
 
 		wp_enqueue_script(
 			self::EDITOR_SCRIPT_HANDLE,
-			plugins_url( self::EDITOR_SCRIPT_PATH, ROTATE_EVERYTHING_FILE ),
+			plugins_url( self::EDITOR_SCRIPT_PATH, ROTATILE_FILE ),
 			$dependencies,
 			$version,
 			true
@@ -165,14 +165,14 @@ final class Rotate_Everything_Assets {
 		 */
 		wp_add_inline_script(
 			self::EDITOR_SCRIPT_HANDLE,
-			'window.rotateEverythingSettings = ' . wp_json_encode( Rotate_Everything_Settings::get_settings_for_script() ) . ';',
+			'window.rotatileSettings = ' . wp_json_encode( Rotatile_Settings::get_settings_for_script() ) . ';',
 			'before'
 		);
 
 		wp_set_script_translations(
 			self::EDITOR_SCRIPT_HANDLE,
-			'rotate-everything',
-			ROTATE_EVERYTHING_PATH . 'languages'
+			'rotatile',
+			ROTATILE_PATH . 'languages'
 		);
 	}
 }

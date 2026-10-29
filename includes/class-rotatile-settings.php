@@ -2,7 +2,7 @@
 /**
  * Configuration values and the sanitizing that guards them.
  *
- * @package RotateEverything
+ * @package Rotatile
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
  * reaches a CSS declaration without being validated first. The same array is
  * handed to the editor script, so PHP and JavaScript cannot drift apart.
  */
-final class Rotate_Everything_Settings {
+final class Rotatile_Settings {
 
 	/**
 	 * Lowest angle offered by default, in degrees.
@@ -85,7 +85,7 @@ final class Rotate_Everything_Settings {
 		 *
 		 * @param string[] $blocks Block names, for example `core/image`.
 		 */
-		$blocks = apply_filters( 'rotate_everything_supported_blocks', self::DEFAULT_SUPPORTED_BLOCKS );
+		$blocks = apply_filters( 'rotatile_supported_blocks', self::DEFAULT_SUPPORTED_BLOCKS );
 
 		if ( ! is_array( $blocks ) ) {
 			return self::DEFAULT_SUPPORTED_BLOCKS;
@@ -126,7 +126,7 @@ final class Rotate_Everything_Settings {
 		 *
 		 * @param int $min_angle Lowest angle, in degrees.
 		 */
-		$min = apply_filters( 'rotate_everything_min_angle', self::DEFAULT_MIN_ANGLE );
+		$min = apply_filters( 'rotatile_min_angle', self::DEFAULT_MIN_ANGLE );
 
 		/**
 		 * Filters the highest angle the control offers.
@@ -135,7 +135,7 @@ final class Rotate_Everything_Settings {
 		 *
 		 * @param int $max_angle Highest angle, in degrees.
 		 */
-		$max = apply_filters( 'rotate_everything_max_angle', self::DEFAULT_MAX_ANGLE );
+		$max = apply_filters( 'rotatile_max_angle', self::DEFAULT_MAX_ANGLE );
 
 		$min = self::to_degrees( $min, self::DEFAULT_MIN_ANGLE );
 		$max = self::to_degrees( $max, self::DEFAULT_MAX_ANGLE );
@@ -170,7 +170,7 @@ final class Rotate_Everything_Settings {
 		 *
 		 * @param int $step Increment, in degrees.
 		 */
-		$step = apply_filters( 'rotate_everything_step', self::DEFAULT_STEP );
+		$step = apply_filters( 'rotatile_step', self::DEFAULT_STEP );
 
 		$step = self::to_degrees( $step, self::DEFAULT_STEP );
 		$step = abs( $step );
@@ -191,7 +191,7 @@ final class Rotate_Everything_Settings {
 		 *
 		 * @param int $default_angle Angle, in degrees.
 		 */
-		$angle = apply_filters( 'rotate_everything_default_angle', self::DEFAULT_ANGLE );
+		$angle = apply_filters( 'rotatile_default_angle', self::DEFAULT_ANGLE );
 
 		return self::clamp( self::to_degrees( $angle, self::DEFAULT_ANGLE ) );
 	}
@@ -214,7 +214,7 @@ final class Rotate_Everything_Settings {
 		 *
 		 * @param string $duration CSS time value, for example `0.2s` or `200ms`.
 		 */
-		$duration = apply_filters( 'rotate_everything_transition_duration', self::DEFAULT_TRANSITION_DURATION );
+		$duration = apply_filters( 'rotatile_transition_duration', self::DEFAULT_TRANSITION_DURATION );
 
 		if ( ! is_scalar( $duration ) || is_bool( $duration ) ) {
 			return self::DEFAULT_TRANSITION_DURATION;

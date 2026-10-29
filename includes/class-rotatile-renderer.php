@@ -2,7 +2,7 @@
 /**
  * Server-side rendering of the rotation.
  *
- * @package RotateEverything
+ * @package Rotatile
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -16,14 +16,14 @@ defined( 'ABSPATH' ) || exit;
  * block's own save function produced. Deactivating the plugin therefore
  * invalidates nothing: the blocks simply stop being tilted.
  */
-final class Rotate_Everything_Renderer {
+final class Rotatile_Renderer {
 
 	/**
 	 * Class added to the element that carries the transform.
 	 *
 	 * @var string
 	 */
-	const ROTATED_CLASS = 'rotate-everything-rotated';
+	const ROTATED_CLASS = 'rotatile-rotated';
 
 	/**
 	 * Elements skipped when looking for the block's outermost rendering element.
@@ -54,14 +54,14 @@ final class Rotate_Everything_Renderer {
 			return $block_content;
 		}
 
-		if ( ! in_array( $block['blockName'], Rotate_Everything_Settings::get_supported_blocks(), true ) ) {
+		if ( ! in_array( $block['blockName'], Rotatile_Settings::get_supported_blocks(), true ) ) {
 			return $block_content;
 		}
 
 		/*
-		 * Guards against the plugin surviving a core downgrade below 6.2.
-		 * WordPress refuses to activate it there, but it can stay active
-		 * across a rollback.
+		 * Guards against the plugin surviving a core downgrade below 6.2, the
+		 * release the tag processor shipped in. WordPress refuses to activate
+		 * it below its 6.6 floor, but it can stay active across a rollback.
 		 */
 		if ( ! class_exists( 'WP_HTML_Tag_Processor' ) ) {
 			return $block_content;
@@ -69,7 +69,7 @@ final class Rotate_Everything_Renderer {
 
 		$attributes = ( isset( $block['attrs'] ) && is_array( $block['attrs'] ) ) ? $block['attrs'] : array();
 		$raw_angle  = isset( $attributes['rotation'] ) ? $attributes['rotation'] : null;
-		$angle      = Rotate_Everything_Settings::sanitize_angle( $raw_angle );
+		$angle      = Rotatile_Settings::sanitize_angle( $raw_angle );
 
 		if ( 0 === $angle ) {
 			return $block_content;
@@ -81,7 +81,7 @@ final class Rotate_Everything_Renderer {
 			return $block_content;
 		}
 
-		self::add_class( $processor, self::ROTATED_CLASS );
+		$processor->add_class( self::ROTATED_CLASS );
 
 		/*
 		 * $angle is an integer confined to the configured range, and %d emits
@@ -89,7 +89,7 @@ final class Rotate_Everything_Renderer {
 		 */
 		self::append_declaration( $processor, 'transform', sprintf( 'rotate(%ddeg)', $angle ) );
 
-		Rotate_Everything_Assets::enqueue_front_style();
+		Rotatile_Assets::enqueue_front_style();
 
 		return $processor->get_updated_html();
 	}
@@ -128,35 +128,6 @@ final class Rotate_Everything_Renderer {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Adds a class to the current element without dropping the ones it has.
-	 *
-	 * Written with get_attribute() and set_attribute() rather than add_class(),
-	 * which only arrived in WordPress 6.4 and would raise the plugin's floor
-	 * for no gain.
-	 *
-	 * @param WP_HTML_Tag_Processor $processor  Processor positioned on an element.
-	 * @param string                $class_name Class to add.
-	 * @return void
-	 */
-	private static function add_class( WP_HTML_Tag_Processor $processor, $class_name ) {
-		$existing = $processor->get_attribute( 'class' );
-
-		if ( ! is_string( $existing ) || '' === trim( $existing ) ) {
-			$processor->set_attribute( 'class', $class_name );
-
-			return;
-		}
-
-		$classes = preg_split( '/\s+/', trim( $existing ) );
-
-		if ( is_array( $classes ) && in_array( $class_name, $classes, true ) ) {
-			return;
-		}
-
-		$processor->set_attribute( 'class', trim( $existing ) . ' ' . $class_name );
 	}
 
 	/**

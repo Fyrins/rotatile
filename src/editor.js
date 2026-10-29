@@ -1,5 +1,5 @@
 /**
- * Rotate Everything - block editor integration.
+ * Rotatile - block editor integration.
  *
  * Nothing here writes to the saved markup. The `rotation` attribute is declared
  * without a `source`, which keeps it in the block comment where block validation
@@ -39,7 +39,7 @@ function toInteger( value, fallback ) {
 	return Number.isFinite( number ) ? Math.round( number ) : fallback;
 }
 
-const provided = window.rotateEverythingSettings || {};
+const provided = window.rotatileSettings || {};
 
 /**
  * The supported block types and the angle bounds are decided in PHP, which is
@@ -104,13 +104,13 @@ function RotationPanel( { attributes, setAttributes } ) {
 			title={ _x(
 				'Rotation',
 				'block inspector panel title',
-				'rotate-everything'
+				'rotatile'
 			) }
 			initialOpen={ 0 !== angle }
 		>
 			<RangeControl
 				__nextHasNoMarginBottom
-				label={ __( 'Angle', 'rotate-everything' ) }
+				label={ __( 'Angle', 'rotatile' ) }
 				value={ angle }
 				min={ config.minAngle }
 				max={ config.maxAngle }
@@ -119,7 +119,7 @@ function RotationPanel( { attributes, setAttributes } ) {
 					/* translators: 1: Lowest angle offered, in degrees. 2: Highest angle offered, in degrees. */
 					__(
 						'Between %1$d° and %2$d°. A rotated block keeps its original space on the page, so its corners overlap neighbouring content, and a full-width block at a large angle can push the page sideways. Rotating text also makes that text harder to read.',
-						'rotate-everything'
+						'rotatile'
 					),
 					config.minAngle,
 					config.maxAngle
@@ -134,7 +134,7 @@ function RotationPanel( { attributes, setAttributes } ) {
 			>
 				{
 					/* translators: Button that sets the rotation angle back to zero. */
-					_x( 'Reset', 'button label', 'rotate-everything' )
+					_x( 'Reset', 'button label', 'rotatile' )
 				}
 			</Button>
 		</PanelBody>
@@ -146,7 +146,7 @@ function RotationPanel( { attributes, setAttributes } ) {
  */
 addFilter(
 	'blocks.registerBlockType',
-	'rotate-everything/attribute',
+	'rotatile/attribute',
 	( blockSettings, blockName ) => {
 		if ( ! isSupported( blockName ) ) {
 			return blockSettings;
@@ -184,7 +184,7 @@ addFilter(
  */
 addFilter(
 	'editor.BlockEdit',
-	'rotate-everything/inspector',
+	'rotatile/inspector',
 	createHigherOrderComponent(
 		( BlockEdit ) => ( props ) => {
 			if ( ! isSupported( props.name ) ) {
@@ -215,7 +215,7 @@ addFilter(
  */
 addFilter(
 	'editor.BlockListBlock',
-	'rotate-everything/preview',
+	'rotatile/preview',
 	createHigherOrderComponent(
 		( BlockListBlock ) => ( props ) => {
 			if ( ! isSupported( props.name ) ) {

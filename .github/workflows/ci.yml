@@ -64,7 +64,7 @@ jobs:
         uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
 
       # The project ruleset sets testVersion to 7.4- and minimum_wp_version to
-      # 6.2, so PHPCompatibilityWP and the deprecation sniffs check against the
+      # 6.6, so PHPCompatibilityWP and the deprecation sniffs check against the
       # versions the plugin actually claims to support.
       - name: Run PHPCS
         run: vendor/bin/phpcs --report-full --report-checkstyle=./phpcs-report.xml
@@ -104,7 +104,7 @@ jobs:
           set -euo pipefail
           EXPECTED=$(php -r "echo md5('build/editor.js');")
           echo "Expected hash for build/editor.js: $EXPECTED"
-          if [ ! -f "languages/rotate-everything-fr_FR-$EXPECTED.json" ]; then
+          if [ ! -f "languages/rotatile-fr_FR-$EXPECTED.json" ]; then
             echo "::error::languages/ has no JSON named after build/editor.js. Run npm run i18n."
             ls -1 languages/
             exit 1
@@ -139,22 +139,22 @@ jobs:
       # previous run left behind.
       - name: Assemble the package
         run: |
-          mkdir -p dist/rotate-everything
+          mkdir -p dist/rotatile
           rsync -a --delete --delete-excluded \
-            --exclude-from=.distignore ./ dist/rotate-everything/
+            --exclude-from=.distignore ./ dist/rotatile/
 
       - name: Show what is in the package
-        run: find dist/rotate-everything -type f | sort
+        run: find dist/rotatile -type f | sort
 
       - name: Fail if the built script is missing from the package
         run: |
-          test -f dist/rotate-everything/build/editor.js
-          test -f dist/rotate-everything/build/editor.asset.php
+          test -f dist/rotatile/build/editor.js
+          test -f dist/rotatile/build/editor.asset.php
 
       - name: Run Plugin Check
         uses: WordPress/plugin-check-action@10857da14b6c2246d15402b3e69f777edcf8c12e # v1.1.9
         with:
-          build-dir: ./dist/rotate-everything
+          build-dir: ./dist/rotatile
           categories: |
             general
             plugin_repo
