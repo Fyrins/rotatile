@@ -12,6 +12,11 @@ jobs:
   deploy:
     name: Publish
     runs-on: ubuntu-latest
+    # Publishing needs an approval in the Actions tab, and only v* tags may
+    # deploy: both rules live in the wordpress-org environment settings.
+    environment:
+      name: wordpress-org
+      url: https://wordpress.org/plugins/rotatile/
     steps:
       # Pinned to a commit SHA rather than a tag. This job holds the SVN
       # credentials, and a tag is a movable reference: whatever it pointed at
