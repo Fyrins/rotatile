@@ -1,20 +1,45 @@
 # Rotatile
 
+![A stack of tilted cards with a circular arrow on the top one, next to the name Rotatile and the line "Any angle, from the editor sidebar."](.wordpress-org/banner-1544x500.png)
+
 Rotate any block by a free angle from the editor sidebar. Server-rendered CSS transform, no JavaScript on the front end.
 
 [![CI](https://github.com/Fyrins/rotatile/actions/workflows/ci.yml/badge.svg)](https://github.com/Fyrins/rotatile/actions/workflows/ci.yml)
+[![License: GPL v2](https://img.shields.io/badge/license-GPL--2.0--or--later-blue.svg)](LICENSE)
+[![Sponsor](https://img.shields.io/badge/sponsor-GitHub%20Sponsors-ea4aaa.svg)](https://github.com/sponsors/Fyrins)
 
-Plugin directory page: https://wordpress.org/plugins/rotatile/
+The plugin adds a Rotation panel to the block inspector. The angle is stored as a block attribute, previewed live in the editor, and turned into a `transform: rotate()` declaration when the page is rendered. Deactivating the plugin leaves every block valid.
 
-- **Requires WordPress** 6.6 or later
-- **Requires PHP** 7.4 or later
-- **License** GPL-2.0-or-later
+- Plugin page: [wordpress.org/plugins/rotatile](https://wordpress.org/plugins/rotatile/)
+- Requires WordPress 6.6, PHP 7.4
+- Licensed GPL-2.0-or-later
 
----
+## What it looks like
 
-## What it does
+One angle control and a reset button in the block sidebar. The block follows the control as it moves.
 
-Adds a `Rotation` panel to the block inspector. The angle is stored as a block attribute, previewed live in the editor, and turned into a `transform: rotate()` declaration when the page is rendered.
+<table>
+<tr>
+<td width="50%" valign="top">
+
+![The block editor with an image tilted by -6 degrees, and the Rotation panel open in the sidebar with the angle set to -6.](.wordpress-org/screenshot-1.png)
+
+<em>The Rotation panel</em>
+
+</td>
+<td width="50%" valign="top">
+
+![The same image tilted by 22 degrees while the angle control is being dragged.](.wordpress-org/screenshot-2.png)
+
+<em>Live preview while dragging</em>
+
+</td>
+</tr>
+</table>
+
+On the front end the rotation is an inline style written by the server. No script is loaded.
+
+![A blog post on the front end of a block theme, with the image rotated by a few degrees between two paragraphs.](.wordpress-org/screenshot-3.png)
 
 By default the panel appears on `core/image` and on nothing else. Rotating running text hurts legibility, so opening the list up is a decision the site owner makes explicitly through a filter.
 
