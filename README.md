@@ -4,6 +4,10 @@
 
 Rotate any block by a free angle from the editor sidebar. Server-rendered CSS transform, no JavaScript on the front end.
 
+[![WordPress.org version](https://img.shields.io/wordpress/plugin/v/rotatile.svg)](https://wordpress.org/plugins/rotatile/)
+[![Tested up to](https://img.shields.io/wordpress/plugin/tested/rotatile.svg)](https://wordpress.org/plugins/rotatile/)
+[![Required PHP](https://img.shields.io/wordpress/plugin/required-php/rotatile.svg)](https://wordpress.org/plugins/rotatile/)
+[![Active installs](https://img.shields.io/wordpress/plugin/installs/rotatile.svg)](https://wordpress.org/plugins/rotatile/advanced/)
 [![CI](https://github.com/Fyrins/rotatile/actions/workflows/ci.yml/badge.svg)](https://github.com/Fyrins/rotatile/actions/workflows/ci.yml)
 [![License: GPL v2](https://img.shields.io/badge/license-GPL--2.0--or--later-blue.svg)](LICENSE)
 [![Sponsor](https://img.shields.io/badge/sponsor-GitHub%20Sponsors-ea4aaa.svg)](https://github.com/sponsors/Fyrins)
