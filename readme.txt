@@ -12,6 +12,8 @@ Tilt a block by any angle from the editor sidebar. The transform is rendered by 
 
 == Description ==
 
+https://www.youtube.com/watch?v=wZRDZyblClU
+
 Rotatile adds a Rotation panel to the block inspector. Pick an angle, watch the block tilt in the editor, and that is the whole feature. There is no settings page, no account, no dashboard notice and no outgoing request.
 
 Out of the box the panel is offered on the Image block and nothing else. That restriction is the point rather than an oversight: a tilted paragraph is a paragraph people have to tilt their head to read. If your design needs another block type, one filter opens it up.
