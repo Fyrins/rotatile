@@ -23,6 +23,10 @@ The plugin adds a Rotation panel to the block inspector. The angle is stored as 
 
 ## What it looks like
 
+![An image block selected in the editor. In the Rotation panel the angle is set to -6, then to 8, and the image tilts each time.](.github/media/demo.gif)
+
+<em>Typing an angle in the Rotation panel tilts the image straight away.</em>
+
 One angle control and a reset button in the block sidebar. The block follows the control as it moves.
 
 <table>
