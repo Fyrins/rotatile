@@ -111,11 +111,6 @@ jobs:
           set -euo pipefail
           test -f build/editor.js
           test -f build/editor.asset.php
-          EXPECTED=$(php -r "echo md5('build/editor.js');")
-          if [ ! -f "languages/rotatile-fr_FR-$EXPECTED.json" ]; then
-            echo "::error::Translation JSON does not match build/editor.js. Run npm run i18n."
-            exit 1
-          fi
 
       # The action reads .distignore itself to build what it commits, which now
       # includes build/ and excludes src/, and pushes .wordpress-org/ to SVN's

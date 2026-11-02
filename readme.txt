@@ -125,7 +125,6 @@ It is being worked on in the Gutenberg project, and it is not part of WordPress 
 * Server-side rendering through `render_block` and the HTML Tag Processor, with nothing written to the saved markup.
 * Stylesheet loaded only on pages that contain a rotated block.
 * Transition neutralised under `prefers-reduced-motion`.
-* French translation included.
 
 == Upgrade Notice ==
 

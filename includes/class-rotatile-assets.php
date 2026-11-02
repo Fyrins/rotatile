@@ -176,10 +176,8 @@ final class Rotatile_Assets {
 			'before'
 		);
 
-		wp_set_script_translations(
-			self::EDITOR_SCRIPT_HANDLE,
-			'rotatile',
-			ROTATILE_PATH . 'languages'
-		);
+		// No path argument: translations come from the language packs that
+		// translate.wordpress.org publishes to wp-content/languages/plugins/.
+		wp_set_script_translations( self::EDITOR_SCRIPT_HANDLE, 'rotatile' );
 	}
 }

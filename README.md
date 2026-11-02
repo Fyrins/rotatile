@@ -269,15 +269,15 @@ Two directories, easy to confuse: `build/` is webpack's output and goes into the
 
 ## Translating
 
-The text domain matches the slug and is declared in the plugin header. There is no `load_plugin_textdomain()` call: just-in-time loading covers a plugin hosted on wordpress.org, and the call would be dead weight.
+Translations are handled on [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/rotatile/), not in this repository. The plugin directory asks hosted plugins not to ship `.po`, `.mo` or JSON files: it builds language packs from the published code and WordPress installs them in `wp-content/languages/plugins/`. Contributing a locale happens there.
+
+The text domain matches the slug and is declared in the plugin header. There is no `load_plugin_textdomain()` call, and `wp_set_script_translations()` gets no path: just-in-time loading and the language packs cover both PHP and the editor script.
 
 ```bash
 npm run i18n
 ```
 
-That is `make-pot` over `src/`, then `update-po`, `make-mo`, and `make-json` with a path map.
-
-The map is what makes it work. `wp_set_script_translations()` reads a JSON file whose name carries the MD5 of the **registered** script path, `build/editor.js`, while the POT references `src/editor.js`. Without `--use-map={"src/editor.js":"build/editor.js"}` the file is named after a path WordPress never looks for, and the editor falls back to English with no error anywhere. CI checks the hash on every run.
+That regenerates `languages/rotatile.pot` from the code, as a reference for reviewing strings. It is the only file in `languages/`.
 
 ## Contributing
 
