@@ -1,22 +1,25 @@
-# Rotatile
+<p align="center">
+  <img src=".wordpress-org/banner-1544x500.png" alt="A stack of tilted cards with a circular arrow on the top one, next to the name Rotatile and the line &quot;Any angle, from the editor sidebar.&quot;">
+</p>
 
-![A stack of tilted cards with a circular arrow on the top one, next to the name Rotatile and the line "Any angle, from the editor sidebar."](.wordpress-org/banner-1544x500.png)
+<h1 align="center">Rotatile</h1>
 
-Rotate any block by a free angle from the editor sidebar. Server-rendered CSS transform, no JavaScript on the front end.
+<p align="center">Rotate any block by a free angle from the editor sidebar. Server-rendered CSS transform, no JavaScript on the front end.</p>
 
-[![WordPress.org version](https://img.shields.io/wordpress/plugin/v/rotatile.svg)](https://wordpress.org/plugins/rotatile/)
-[![Tested up to](https://img.shields.io/wordpress/plugin/tested/rotatile.svg)](https://wordpress.org/plugins/rotatile/)
-[![Required PHP](https://img.shields.io/wordpress/plugin/required-php/rotatile.svg)](https://wordpress.org/plugins/rotatile/)
-[![Active installs](https://img.shields.io/wordpress/plugin/installs/rotatile.svg)](https://wordpress.org/plugins/rotatile/advanced/)
-[![CI](https://github.com/Fyrins/rotatile/actions/workflows/ci.yml/badge.svg)](https://github.com/Fyrins/rotatile/actions/workflows/ci.yml)
-[![License: GPL v2](https://img.shields.io/badge/license-GPL--2.0--or--later-blue.svg)](LICENSE)
-[![Sponsor](https://img.shields.io/badge/sponsor-GitHub%20Sponsors-ea4aaa.svg)](https://github.com/sponsors/Fyrins)
+<p align="center">
+  <a href="https://wordpress.org/plugins/rotatile/"><img src="https://img.shields.io/wordpress/plugin/v/rotatile?label=version" alt="Version on WordPress.org"></a>
+  <a href="https://wordpress.org/plugins/rotatile/"><img src="https://img.shields.io/wordpress/plugin/wp-version/rotatile?label=requires%20WordPress" alt="Requires WordPress"></a>
+  <a href="https://wordpress.org/plugins/rotatile/"><img src="https://img.shields.io/wordpress/plugin/tested/rotatile?label=WordPress" alt="Tested up to"></a>
+  <a href="https://wordpress.org/plugins/rotatile/"><img src="https://img.shields.io/wordpress/plugin/required-php/rotatile?label=PHP" alt="Requires PHP"></a>
+  <a href="https://wordpress.org/plugins/rotatile/advanced/"><img src="https://img.shields.io/wordpress/plugin/installs/rotatile?label=active%20installs" alt="Active installs"></a>
+  <br>
+  <a href="https://github.com/Fyrins/rotatile/actions/workflows/ci.yml"><img src="https://github.com/Fyrins/rotatile/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--2.0--or--later-green" alt="License: GPL-2.0-or-later"></a>
+  <a href="https://github.com/Fyrins/rotatile/issues"><img src="https://img.shields.io/github/issues/Fyrins/rotatile" alt="Open issues"></a>
+  <a href="https://github.com/sponsors/Fyrins"><img src="https://img.shields.io/badge/sponsor-GitHub%20Sponsors-ea4aaa" alt="Sponsor"></a>
+</p>
 
 The plugin adds a Rotation panel to the block inspector. The angle is stored as a block attribute, previewed live in the editor, and turned into a `transform: rotate()` declaration when the page is rendered. Deactivating the plugin leaves every block valid.
-
-- Plugin page: [wordpress.org/plugins/rotatile](https://wordpress.org/plugins/rotatile/)
-- Requires WordPress 6.6, PHP 7.4
-- Licensed GPL-2.0-or-later
 
 ## What it looks like
 
