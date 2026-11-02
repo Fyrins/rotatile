@@ -101,17 +101,13 @@ Zero errors, zero warnings. Running it on the source tree instead reports the de
 
 ## Translations
 
+Translations live on [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/rotatile/). The plugin directory asked us not to ship translation files: it generates language packs from the published code, including the JSON for `build/editor.js`, and WordPress installs them on its own. Do not add `.po`, `.mo` or `.json` files to `languages/`.
+
 ```bash
 npm run i18n
 ```
 
-That runs four steps: `make-pot` over `src/` (not over `build/`, whose strings are minified), `update-po`, `make-mo`, and `make-json` with a path map.
-
-The map is the part that bites. `wp_set_script_translations()` names the JSON file after the md5 of the **registered** script path, which is `build/editor.js`, while the POT references `src/editor.js`. Without `--use-map={"src/editor.js":"build/editor.js"}` the JSON gets the wrong name and the editor silently falls back to English, with no error anywhere. CI checks the hash on every run.
-
-If the entry point ever moves, the hash changes and the translations have to be regenerated.
-
-Regenerate the `.pot` from the code rather than editing it. If you add a string:
+That only regenerates `languages/rotatile.pot` from the code (`src/`, not `build/`, whose strings are minified). Regenerate it rather than editing it. If you add a string:
 
 - Literal only. No variable, no concatenation inside `__()`.
 - Numbered `printf` placeholders as soon as there is more than one.

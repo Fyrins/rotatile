@@ -27,7 +27,6 @@ First release.
   `rotatile_min_angle`, `rotatile_max_angle`,
   `rotatile_step`, `rotatile_default_angle` and
   `rotatile_transition_duration`.
-- French translation.
 
 ### Notes
 

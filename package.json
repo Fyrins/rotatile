@@ -8,7 +8,7 @@
     "lint:js": "wp-scripts lint-js src",
     "format": "wp-scripts format src",
     "packages-update": "wp-scripts packages-update",
-    "i18n": "wp i18n make-pot . languages/rotatile.pot --slug=rotatile --domain=rotatile --package-name=\"Rotatile\" --exclude=vendor,node_modules,build,dist,docs,tests,.github && wp i18n update-po languages/rotatile.pot languages/rotatile-fr_FR.po && wp i18n make-mo languages/ && wp i18n make-json languages/ --no-purge --pretty-print --use-map='{\"src/editor.js\":\"build/editor.js\"}'"
+    "i18n": "wp i18n make-pot . languages/rotatile.pot --slug=rotatile --domain=rotatile --package-name=\"Rotatile\" --exclude=vendor,node_modules,build,dist,docs,tests,.github"
   },
   "repository": {
     "type": "git",
